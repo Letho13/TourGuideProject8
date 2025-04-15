@@ -1,5 +1,8 @@
 package com.openclassrooms.tourguide.service;
 
+
+import com.openclassrooms.tourguide.Dto.ListNearByAttractionsByUserDTO;
+import com.openclassrooms.tourguide.Dto.NearByAttractionsByUserDTO;
 import com.openclassrooms.tourguide.helper.InternalTestHelper;
 import com.openclassrooms.tourguide.tracker.Tracker;
 import com.openclassrooms.tourguide.user.User;
@@ -7,14 +10,7 @@ import com.openclassrooms.tourguide.user.UserReward;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,11 +23,14 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 
+import rewardCentral.RewardCentral;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 
+
 @Service
 public class TourGuideService {
+
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	private final GpsUtil gpsUtil;
 	private final RewardsService rewardsService;
@@ -42,8 +41,7 @@ public class TourGuideService {
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
-		
-		Locale.setDefault(Locale.US);
+        Locale.setDefault(Locale.US);
 
 		if (testMode) {
 			logger.info("TestMode enabled");
@@ -54,6 +52,7 @@ public class TourGuideService {
 		tracker = new Tracker(this);
 		addShutDownHook();
 	}
+
 
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
@@ -95,15 +94,28 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : gpsUtil.getAttractions()) {
-			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
+	public ListNearByAttractionsByUserDTO getNearByAttractions(VisitedLocation visitedLocation, User user) {
+		ListNearByAttractionsByUserDTO nearByAttractionsByUserDTOList = new ListNearByAttractionsByUserDTO();
+		List<Attraction> nearbyAttractions = gpsUtil.getAttractions().stream()
+						.sorted(Comparator.comparingDouble(
+					attraction -> rewardsService.getDistance(attraction,visitedLocation.location)))
+				.limit(5)
+				.toList();
 
-		return nearbyAttractions;
+		for (Attraction attraction : nearbyAttractions) {
+			NearByAttractionsByUserDTO near = new NearByAttractionsByUserDTO();
+			near.setAttractionName(attraction.attractionName);
+			near.setAttractionLongitude(attraction.longitude);
+			near.setAttractionLatitude(attraction.latitude);
+			near.setUserLatitude(visitedLocation.location.latitude);
+			near.setUserLongitude(visitedLocation.location.longitude);
+			near.setRewardPoints(rewardsService.getRewardPoints(attraction,user));
+			near.setDistanceBetweenUserAndAttraction(rewardsService.getDistance(attraction,visitedLocation.location));
+
+		nearByAttractionsByUserDTOList.getNearByAttractionsByUserDTOList().add(near);
+
+		}
+		return nearByAttractionsByUserDTOList;
 	}
 
 	private void addShutDownHook() {
