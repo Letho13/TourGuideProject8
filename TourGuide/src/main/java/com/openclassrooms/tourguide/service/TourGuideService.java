@@ -12,6 +12,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -43,11 +44,12 @@ public class TourGuideService {
         this.rewardsService = rewardsService;
         Locale.setDefault(Locale.US);
 
-        if (testMode) {
-            logger.info("TestMode enabled");
-            logger.debug("Initializing users");
-            initializeInternalUsers();
-            logger.debug("Finished initializing users");
+        try {
+            logger.info("Initializing internal users");
+            initializeInternalUsers().get();
+            logger.debug("Finished initializing internal users");
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Failed to initialize internal users", e);
         }
         tracker = new Tracker(this);
         addShutDownHook();
