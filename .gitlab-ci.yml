@@ -31,7 +31,7 @@ build_job:
 
     - echo "Compilation du projet principal..."
     - mvn compile -B
-    -
+
 test_job:
   stage: test
   image: maven:3.8-openjdk-17
