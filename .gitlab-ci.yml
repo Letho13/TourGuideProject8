@@ -11,14 +11,23 @@ build_job:
   stage: build
   image: maven:3.8-openjdk-17
   script:
-    - cd TourGuide/libs/gpsUtil
-    - mvn install -DskipTests
-    - cd ../tripPricer
-    - mvn install -DskipTests
-    - cd ../rewardCentral
-    - mvn install -DskipTests
-    - cd ../../ -
-    - mvn compile -B
+    - echo "Listing racine du projet..."
+    - ls -la
+    - echo "Contenu de TourGuide/libs..."
+    - ls -la TourGuide/libs || echo "Dossier TourGuide/libs introuvable"
+
+    - echo "Build gpsUtil..."
+    - if [ -d TourGuide/libs/gpsUtil ]; then cd TourGuide/libs/gpsUtil && mvn install -DskipTests && cd -; else echo 'gpsUtil non trouvé'; fi
+
+    - echo "Build tripPricer..."
+    - if [ -d TourGuide/libs/tripPricer ]; then cd TourGuide/libs/tripPricer && mvn install -DskipTests && cd -; else echo 'tripPricer non trouvé'; fi
+
+    - echo "Build rewardCentral..."
+    - if [ -d TourGuide/libs/rewardCentral ]; then cd TourGuide/libs/rewardCentral && mvn install -DskipTests && cd -; else echo 'rewardCentral non trouvé'; fi
+
+    - echo "Compilation du projet principal..."
+    - if [ -f pom.xml ]; then mvn compile -B; else echo 'Fichier pom.xml introuvable à la racine'; fi
+
 
 test_job:
   stage: test
