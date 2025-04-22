@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 
@@ -91,13 +90,6 @@ public class TourGuideService {
         return providers;
     }
 
-//	public VisitedLocation trackUserLocation(User user) {
-//		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-//		user.addToVisitedLocations(visitedLocation);
-//		rewardsService.calculateRewards(user);
-//		return visitedLocation;
-//	}
-
     public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
         return CompletableFuture.supplyAsync(() -> {
             VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
@@ -151,19 +143,6 @@ public class TourGuideService {
     // Database connection will be used for external users, but for testing purposes
     // internal users are provided and stored in memory
     private final Map<String, User> internalUserMap = new ConcurrentHashMap<>();
-
-//    private void initializeInternalUsers() {
-//        IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {
-//            String userName = "internalUser" + i;
-//            String phone = "000";
-//            String email = userName + "@tourGuide.com";
-//            User user = new User(UUID.randomUUID(), userName, phone, email);
-//            generateUserLocationHistory(user);
-//
-//            internalUserMap.put(userName, user);
-//        });
-//        logger.debug("Created " + InternalTestHelper.getInternalUserNumber() + " internal test users.");
-//    }
 
     private CompletableFuture<Void> initializeInternalUsers() {
 

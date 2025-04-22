@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import com.openclassrooms.tourguide.Dto.ListNearByAttractionsByUserDTO;
+
 import com.openclassrooms.tourguide.Dto.NearByAttractionsByUserDTO;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

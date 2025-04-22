@@ -41,46 +41,6 @@ public class RewardsService {
         proximityBuffer = defaultProximityBuffer;
     }
 
-//	public void calculateRewards(User user) {
-//		List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
-//		List<Attraction> attractions = gpsUtil.getAttractions();
-//
-//		for(VisitedLocation visitedLocation : userLocations) {
-//			for(Attraction attraction : attractions) {
-//				if(user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))) {
-//					if(nearAttraction(visitedLocation, attraction)) {
-//						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-//					}
-//				}
-//			}
-//		}
-//	}
-
-//    public void calculateRewards(User user) {
-//        List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
-//        List<Attraction> attractions = gpsUtil.getAttractions();
-//
-//        ExecutorService executor = Executors.newFixedThreadPool(10); // 10 threads max
-//        List<CompletableFuture<Void>> futures = new ArrayList<>();
-//
-//        for (VisitedLocation visitedLocation : userLocations) {
-//            futures.add(CompletableFuture.runAsync(() -> {
-//
-//                for (Attraction attraction : attractions) {
-//                    if (user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))) {
-//                        if (nearAttraction(visitedLocation, attraction)) {
-//                            user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-//                        }
-//                    }
-//                }
-//            }, executor));
-//        }
-//
-//        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-//        allOf.join();
-//
-//        executor.shutdown();
-//    }
 
     public CompletableFuture<Void> calculateRewards(User user) {
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());

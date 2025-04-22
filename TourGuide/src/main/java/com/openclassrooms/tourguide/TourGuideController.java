@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 
 import com.openclassrooms.tourguide.service.TourGuideService;
@@ -34,7 +33,6 @@ public class TourGuideController {
         return tourGuideService.getUserLocation(getUser(userName));
     }
 
-//    @GetMapping(value = "/getNearbyAttractions", produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping("/getNearbyAttractions")
     public CompletableFuture<List<NearByAttractionsByUserDTO>> getNearbyAttractions(@RequestParam String userName) {
         User user = tourGuideService.getUser(userName);

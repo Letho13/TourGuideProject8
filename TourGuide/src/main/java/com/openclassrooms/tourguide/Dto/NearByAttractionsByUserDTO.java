@@ -1,15 +1,7 @@
 package com.openclassrooms.tourguide.Dto;
 
-import com.openclassrooms.tourguide.service.RewardsService;
-
 public class NearByAttractionsByUserDTO {
 
-
-    // Name of Tourist attraction,
-    // Tourist attractions lat/long,
-    // The user's location lat/long,
-    // The distance in miles between the user's location and each of the attractions.
-    // The reward points for visiting each Attraction.
 
     private String attractionName;
     private double attractionLongitude;
