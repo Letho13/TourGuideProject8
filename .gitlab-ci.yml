@@ -5,21 +5,33 @@ stages:
 cache:
   paths:
     - .m2/repository
-  key: "$CI_JOB_NAME"
+  key: shared-m2-cache
 
 build_job:
   stage: build
   image: maven:3.8-openjdk-17
+  cache:
+    paths:
+      - .m2/repository
+    key: shared-m2-cache
   script:
-    - cd TourGuide/libs/gpsUtil
-    - mvn install -DskipTests
-    - cd ../tripPricer
-    - mvn install -DskipTests
-    - cd ../rewardCentral
-    - mvn install -DskipTests
-    - cd ../../ -
-    - mvn compile -B
+    - echo "Listing racine du projet..."
+    - ls -la
+    - echo "Contenu de TourGuide/libs..."
+    - ls -la TourGuide/libs || echo "Dossier TourGuide/libs introuvable"
 
+    - echo "Build gpsUtil..."
+    - cd TourGuide/libs/gpsUtil && mvn install -DskipTests && cd -
+
+    - echo "Build tripPricer..."
+    - cd TourGuide/libs/tripPricer && mvn install -DskipTests && cd -
+
+    - echo "Build rewardCentral..."
+    - cd TourGuide/libs/rewardCentral && mvn install -DskipTests && cd -
+
+    - echo "Compilation du projet principal..."
+    - mvn compile -B
+    -
 test_job:
   stage: test
   image: maven:3.8-openjdk-17
