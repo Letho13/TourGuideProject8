@@ -12,13 +12,14 @@ build_job:
   stage: build
   image: maven:3.8-openjdk-17
   script:
-  - cd TourGuide
-  - mvn compile -B
+    - cd TourGuide/libs/gpsUtil && mvn install -DskipTests
+      - cd ../tripPricer && mvn install -DskipTests
+      - cd ../rewardCentral && mvn install -DskipTests
+      - cd ../../ && mvn compile -B
 
 test_job:
   stage: test
   image: maven:3.8-openjdk-17
   script:
-   - cd TourGuide
-    - mvn test -B
+    - cd TourGuide && mvn test -B
 
