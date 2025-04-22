@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+
+import com.openclassrooms.tourguide.Dto.NearByAttractionsByUserDTO;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +32,9 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		CompletableFuture<VisitedLocation> visitedLocationCF = tourGuideService.trackUserLocation(user);
 		tourGuideService.tracker.stopTracking();
+		VisitedLocation visitedLocation = visitedLocationCF.join();
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
 	}
 
@@ -85,14 +89,14 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		CompletableFuture<VisitedLocation> visitedLocationCF = tourGuideService.trackUserLocation(user);
 
 		tourGuideService.tracker.stopTracking();
-
+		VisitedLocation visitedLocation = visitedLocationCF.join();
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
 
-	@Disabled // Not yet implemented
+
 	@Test
 	public void getNearbyAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -101,9 +105,11 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+		CompletableFuture<VisitedLocation> visitedLocationCF = tourGuideService.trackUserLocation(user);
 
-		List<Attraction> attractions = tourGuideService.getNearByAttractions(visitedLocation);
+		List<NearByAttractionsByUserDTO> attractions = tourGuideService
+				.getNearByAttractions(visitedLocationCF)
+				.join();
 
 		tourGuideService.tracker.stopTracking();
 
