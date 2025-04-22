@@ -1,41 +1,56 @@
+image: maven:3.8-openjdk-17
+
 stages:
-  - build
+  - prepare
   - test
+  - build
 
-cache:
-  paths:
-    - .m2/repository
-  key: shared-m2-cache
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "-B -ntp"
 
-build_job:
-  stage: build
-  image: maven:3.8-openjdk-17
-  cache:
+prepare-job:
+  stage: prepare
+  script:
+    - cd project-tour-guide/TourGuide
+    - echo "Installation des .jar locaux dans le repo Maven"
+    - for jar in libs/*.jar; do
+      name=$(basename "$jar" .jar);
+      mvn install:install-file \
+      -Dfile=$jar \
+      -DgroupId=$name \
+      -DartifactId=$name \
+      -Dversion=1.0 \
+      -Dpackaging=jar \
+      -DgeneratePom=true \
+      $MAVEN_CLI_OPTS;
+      done
+  artifacts:
     paths:
       - .m2/repository
-    key: shared-m2-cache
-  script:
-    - echo "Listing racine du projet..."
-    - ls -la
-    - echo "Contenu de TourGuide/libs..."
-    - ls -la TourGuide/libs || echo "Dossier TourGuide/libs introuvable"
+    expire_in: 1 hour
 
-    - echo "Build gpsUtil..."
-    - cd TourGuide/libs/gpsUtil && mvn install -DskipTests && cd -
-
-    - echo "Build tripPricer..."
-    - cd TourGuide/libs/tripPricer && mvn install -DskipTests && cd -
-
-    - echo "Build rewardCentral..."
-    - cd TourGuide/libs/rewardCentral && mvn install -DskipTests && cd -
-
-    - echo "Compilation du projet principal..."
-    - mvn compile -B
-
-test_job:
+test-job:
   stage: test
-  image: maven:3.8-openjdk-17
+  dependencies:
+    - prepare-job
   script:
-    - cd TourGuide
-    - mvn test -B
+    - cd project-tour-guide/TourGuide
+    - echo "Lancement des tests unitaires"
+    - mvn test $MAVEN_CLI_OPTS
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
 
+build-job:
+  stage: build
+  dependencies:
+    - test-job
+  script:
+    - cd project-tour-guide/TourGuide
+    - echo "Build final avec package"
+    - mvn package $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 day
