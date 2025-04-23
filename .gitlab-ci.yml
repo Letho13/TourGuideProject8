@@ -12,7 +12,7 @@ variables:
 prepare-job:
   stage: prepare
   script:
-    - cd project-tour-guide/TourGuide
+    - cd TourGuideProject8\TourGuide
     - echo "Installation des .jar locaux dans le repo Maven"
     - for jar in libs/*.jar; do
       name=$(basename "$jar" .jar);
@@ -35,7 +35,7 @@ test-job:
   dependencies:
     - prepare-job
   script:
-    - cd project-tour-guide/TourGuide
+    - cd TourGuideProject8\TourGuide
     - echo "Lancement des tests unitaires"
     - mvn test $MAVEN_CLI_OPTS
   artifacts:
@@ -47,7 +47,7 @@ build-job:
   dependencies:
     - test-job
   script:
-    - cd project-tour-guide/TourGuide
+    - cd TourGuideProject8\TourGuide
     - echo "Build final avec package"
     - mvn package $MAVEN_CLI_OPTS
   artifacts:
