@@ -12,18 +12,18 @@ variables:
 prepare-job:
   stage: prepare
   script:
-    - cd TourGuideProject8/TourGuide
-    - echo "Installation des .jar locaux dans le repo Maven"
-    - for jar in libs/*.jar; do
-      name=$(basename "$jar" .jar);
-      mvn install:install-file \
-      -Dfile=$jar \
-      -DgroupId=$name \
-      -DartifactId=$name \
-      -Dversion=1.0 \
-      -Dpackaging=jar \
-      -DgeneratePom=true \
-      $MAVEN_CLI_OPTS;
+    - cd TourGuide/libs
+    - |
+      for jar in *.jar; do
+        name=$(basename "$jar" .jar)
+        mvn install:install-file \
+          -Dfile=$jar \
+          -DgroupId=$name \
+          -DartifactId=$name \
+          -Dversion=1.0 \
+          -Dpackaging=jar \
+          -DgeneratePom=true \
+          $MAVEN_CLI_OPTS
       done
   artifacts:
     paths:
@@ -35,8 +35,7 @@ test-job:
   dependencies:
     - prepare-job
   script:
-    - cd TourGuideProject8/TourGuide
-    - echo "Lancement des tests unitaires"
+    - cd TourGuide
     - mvn test $MAVEN_CLI_OPTS
   artifacts:
     reports:
@@ -47,10 +46,9 @@ build-job:
   dependencies:
     - test-job
   script:
-    - cd TourGuideProject8/TourGuide
-    - echo "Build final avec package"
+    - cd TourGuide
     - mvn package $MAVEN_CLI_OPTS
   artifacts:
     paths:
-      - target/*.jar
+      - TourGuide/target/*.jar
     expire_in: 1 day
