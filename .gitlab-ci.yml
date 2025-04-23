@@ -8,28 +8,71 @@ stages:
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "-B -ntp"
+  LIBRARIES_DIR: "TourGuide/libs"
+  GPSUTIL_JAR: "../../P8-Libs-Central/gpsUtil/target/gpsUtil.jar"
+  TRIPPRICER_JAR: "../../P8-Libs-Central/tripPricer/target/tripPricer.jar"
+  REWARDCENTRAL_JAR: "../../P8-Libs-Central/RewardCentral/target/RewardCentral.jar"
+  GROUP_ID: "com.openclassrooms"
+  VERSION: "1.0.0"
+  MAVEN_REPO_URL: "https://gitlab.com/api/v4/projects/69257506/packages/maven" # URL du repository GitLab Maven
 
+# Etape de préparation des dépendances locales
 prepare-job:
   stage: prepare
   script:
-    - cd TourGuide/libs
+    - cd $LIBRARIES_DIR
     - |
-      for jar in *.jar; do
-        name=$(basename "$jar" .jar)
+      # Installer gpsUtil
+      if [ ! -f "$MAVEN_REPO_DIR/gpsUtil/gpsUtil/1.0.0/gpsUtil.jar" ]; then
         mvn install:install-file \
-          -Dfile=$jar \
-          -DgroupId=$name \
-          -DartifactId=$name \
-          -Dversion=1.0 \
+          -Dfile=$GPSUTIL_JAR \
+          -DgroupId=$GROUP_ID \
+          -DartifactId=gpsUtil \
+          -Dversion=$VERSION \
           -Dpackaging=jar \
           -DgeneratePom=true \
+          -DrepositoryId=gitlab-maven \
+          -Durl=$MAVEN_REPO_URL \
+          -Dusername=$CI_JOB_TOKEN \
           $MAVEN_CLI_OPTS
-      done
+      fi
+
+      # Installer tripPricer
+      if [ ! -f "$MAVEN_REPO_DIR/tripPricer/tripPricer/1.0.0/tripPricer.jar" ]; then
+        mvn install:install-file \
+          -Dfile=$TRIPPRICER_JAR \
+          -DgroupId=$GROUP_ID \
+          -DartifactId=tripPricer \
+          -Dversion=$VERSION \
+          -Dpackaging=jar \
+          -DgeneratePom=true \
+          -DrepositoryId=gitlab-maven \
+          -Durl=$MAVEN_REPO_URL \
+          -Dusername=$CI_JOB_TOKEN \
+          $MAVEN_CLI_OPTS
+      fi
+
+      # Installer rewardCentral
+      if [ ! -f "$MAVEN_REPO_DIR/rewardCentral/rewardCentral/1.0.0/RewardCentral.jar" ]; then
+        mvn install:install-file \
+          -Dfile=$REWARDCENTRAL_JAR \
+          -DgroupId=$GROUP_ID \
+          -DartifactId=rewardCentral \
+          -Dversion=$VERSION \
+          -Dpackaging=jar \
+          -DgeneratePom=true \
+          -DrepositoryId=gitlab-maven \
+          -Durl=$MAVEN_REPO_URL \
+          -Dusername=$CI_JOB_TOKEN \
+          $MAVEN_CLI_OPTS
+      fi
+
   artifacts:
     paths:
       - .m2/repository
     expire_in: 1 hour
 
+# Etape des tests
 test-job:
   stage: test
   dependencies:
@@ -41,6 +84,7 @@ test-job:
     reports:
       junit: target/surefire-reports/TEST-*.xml
 
+# Etape de build
 build-job:
   stage: build
   dependencies:
