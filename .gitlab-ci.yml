@@ -16,20 +16,21 @@ test:
   stage: test
   script:
     - echo "Exécution des tests"
+    - cd TourGuide
     - mvn test
 
 build:
   stage: build
   script:
     - echo "Construction du projet"
-    - mvn -f TourGuide/pom.xml clean package
-      - mkdir -p TourGuide/libs
-      - mv target/tourguide-0.0.1-SNAPSHOT.jar TourGuide/libs/ || echo "Aucun JAR à déplacer"
-      - ls TourGuide/libs/  # Débogage
+      - cd TourGuide
+      - mvn clean package
+      - mkdir -p libs
+      - mv target/tourguide-0.0.1-SNAPSHOT.jar libs/ || echo "Aucun JAR à déplacer"
+      - ls libs/   # Débogage
   artifacts:
     paths:
       - TourGuide/libs/*.jar
-
 
 get_jar_info:
   stage: info

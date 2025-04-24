@@ -52,21 +52,21 @@
 			<artifactId>gpsUtil</artifactId>
 			<version>1</version>
 			<scope>system</scope>
-			<systemPath>C:/DEV/Repo/TourGuideProject8/TourGuide/libs/gpsUtil.jar</systemPath>
+			<systemPath>${project.basedir}/libs/gpsUtil.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tripPricer</groupId>
 			<artifactId>tripPricer</artifactId>
 			<version>1</version>
 			<scope>system</scope>
-			<systemPath>C:/DEV/Repo/TourGuideProject8/TourGuide/libs/tripPricer.jar</systemPath>
+			<systemPath>${project.basedir}/libs/tripPricer.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>rewardCentral</groupId>
 			<artifactId>rewardCentral</artifactId>
 			<version>1</version>
 			<scope>system</scope>
-			<systemPath>C:/DEV/Repo/TourGuideProject8/TourGuide/libs/rewardCentral.jar</systemPath>
+			<systemPath>${project.basedir}/libs/rewardCentral.jar</systemPath>
 		</dependency>
 
         <dependency>
