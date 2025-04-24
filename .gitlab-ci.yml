@@ -4,56 +4,42 @@ stages:
   - prepare
   - test
   - build
+  - info
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  MAVEN_CLI_OPTS: "-B -ntp"
-  LIBRARIES_DIR: "TourGuide/libs"
-  GPSUTIL_JAR: "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/gpsUtil.jar"
-  TRIPPRICER_JAR: "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/tripPricer.jar"
-  REWARDCENTRAL_JAR: "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/RewardCentral.jar"
-  GROUP_ID: "com.openclassrooms"
-  VERSION: "1.0.0"
-  MAVEN_REPO_URL: "https://gitlab.com/api/v4/projects/69257506/packages/maven" # URL du repository GitLab Maven
-
-# Etape de préparation des dépendances locales
-prepare-job:
+prepare:
   stage: prepare
   script:
-    - mkdir -p $LIBRARIES_DIR
-    - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o $LIBRARIES_DIR/gpsUtil.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/gpsUtil.jar"
-    - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o $LIBRARIES_DIR/tripPricer.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/tripPricer.jar"
-    - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o $LIBRARIES_DIR/RewardCentral.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/RewardCentral.jar"
-    - mvn install:install-file -Dfile=$LIBRARIES_DIR/gpsUtil.jar -DgroupId=$GROUP_ID -DartifactId=gpsUtil -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true -DrepositoryId=gitlab-maven -Durl=$MAVEN_REPO_URL -Dusername=$CI_JOB_TOKEN $MAVEN_CLI_OPTS
-    - mvn install:install-file -Dfile=$LIBRARIES_DIR/tripPricer.jar -DgroupId=$GROUP_ID -DartifactId=tripPricer -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true -DrepositoryId=gitlab-maven -Durl=$MAVEN_REPO_URL -Dusername=$CI_JOB_TOKEN $MAVEN_CLI_OPTS
-    - mvn install:install-file -Dfile=$LIBRARIES_DIR/RewardCentral.jar -DgroupId=$GROUP_ID -DartifactId=rewardCentral -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true -DrepositoryId=gitlab-maven -Durl=$MAVEN_REPO_URL -Dusername=$CI_JOB_TOKEN $MAVEN_CLI_OPTS
+    - echo "Préparation de l'environnement"
 
-  artifacts:
-    paths:
-      - .m2/repository
-    expire_in: 1 hour
-
-# Etape des tests
-test-job:
+test:
   stage: test
-  dependencies:
-    - prepare-job
   script:
-    - cd TourGuide
-    - mvn test $MAVEN_CLI_OPTS
-  artifacts:
-    reports:
-      junit: target/surefire-reports/TEST-*.xml
+    - echo "Exécution des tests"
+    - mvn test
 
-# Etape de build
-build-job:
+build:
   stage: build
-  dependencies:
-    - test-job
   script:
-    - cd TourGuide
-    - mvn package $MAVEN_CLI_OPTS
+    - echo "Construction du projet"
+      - mvn clean package
+      - mkdir -p TourGuide/libs
+      - mv target/tourguide-0.0.1-SNAPSHOT.jar TourGuide/libs/ || echo "Aucun JAR à déplacer"
+      - ls TourGuide/libs/  # Débogage
   artifacts:
     paths:
-      - TourGuide/target/*.jar
-    expire_in: 1 day
+      - TourGuide/libs/*.jar
+
+
+get_jar_info:
+  stage: info
+  script:
+    - |
+      if ls TourGuide/libs/*.jar >/dev/null 2>&1; then
+        for JAR_FILE in TourGuide/libs/*.jar; do
+          echo "Fichier JAR: $JAR_FILE"
+          jar tf "$JAR_FILE"
+          unzip -p "$JAR_FILE" META-INF/MANIFEST.MF | grep "Implementation-Version" || echo "Aucun manifeste pour $JAR_FILE"
+        done
+      else
+        echo "Erreur : Aucun JAR trouvé dans TourGuide/libs/"
+      fi
