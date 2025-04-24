@@ -27,6 +27,7 @@ prepare-job:
     - mvn install:install-file -Dfile=$LIBRARIES_DIR/gpsUtil.jar -DgroupId=$GROUP_ID -DartifactId=gpsUtil -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true -DrepositoryId=gitlab-maven -Durl=$MAVEN_REPO_URL -Dusername=$CI_JOB_TOKEN $MAVEN_CLI_OPTS
     - mvn install:install-file -Dfile=$LIBRARIES_DIR/tripPricer.jar -DgroupId=$GROUP_ID -DartifactId=tripPricer -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true -DrepositoryId=gitlab-maven -Durl=$MAVEN_REPO_URL -Dusername=$CI_JOB_TOKEN $MAVEN_CLI_OPTS
     - mvn install:install-file -Dfile=$LIBRARIES_DIR/RewardCentral.jar -DgroupId=$GROUP_ID -DartifactId=rewardCentral -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true -DrepositoryId=gitlab-maven -Durl=$MAVEN_REPO_URL -Dusername=$CI_JOB_TOKEN $MAVEN_CLI_OPTS
+
   artifacts:
     paths:
       - .m2/repository
