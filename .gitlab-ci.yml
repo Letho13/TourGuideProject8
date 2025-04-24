@@ -9,9 +9,9 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "-B -ntp"
   LIBRARIES_DIR: "TourGuide/libs"
-  GPSUTIL_JAR: "../../P8-Libs-Central/gpsUtil/target/gpsUtil.jar"
-  TRIPPRICER_JAR: "../../P8-Libs-Central/tripPricer/target/tripPricer.jar"
-  REWARDCENTRAL_JAR: "../../P8-Libs-Central/RewardCentral/target/RewardCentral.jar"
+  GPSUTIL_JAR: "../../gpsUtil/target/gpsUtil.jar"
+  TRIPPRICER_JAR: "../../tripPricer/target/tripPricer.jar"
+  REWARDCENTRAL_JAR: "../../RewardCentral/target/RewardCentral.jar"
   GROUP_ID: "com.openclassrooms"
   VERSION: "1.0.0"
   MAVEN_REPO_URL: "https://gitlab.com/api/v4/projects/69257506/packages/maven" # URL du repository GitLab Maven
@@ -23,7 +23,7 @@ prepare-job:
     - cd $LIBRARIES_DIR
     - |
       # Installer gpsUtil
-      if [ ! -f "$MAVEN_REPO_DIR/gpsUtil/gpsUtil/1.0.0/gpsUtil.jar" ]; then
+      if [ ! -f "$MAVEN_REPO_DIR/gpsUtil/gpsUtil.jar" ]; then
         mvn install:install-file \
           -Dfile=$GPSUTIL_JAR \
           -DgroupId=$GROUP_ID \
@@ -38,7 +38,7 @@ prepare-job:
       fi
 
       # Installer tripPricer
-      if [ ! -f "$MAVEN_REPO_DIR/tripPricer/tripPricer/1.0.0/tripPricer.jar" ]; then
+      if [ ! -f "$MAVEN_REPO_DIR/tripPricer/tripPricer.jar" ]; then
         mvn install:install-file \
           -Dfile=$TRIPPRICER_JAR \
           -DgroupId=$GROUP_ID \
@@ -53,7 +53,7 @@ prepare-job:
       fi
 
       # Installer rewardCentral
-      if [ ! -f "$MAVEN_REPO_DIR/rewardCentral/rewardCentral/1.0.0/RewardCentral.jar" ]; then
+      if [ ! -f "$MAVEN_REPO_DIR/rewardCentral/RewardCentral.jar" ]; then
         mvn install:install-file \
           -Dfile=$REWARDCENTRAL_JAR \
           -DgroupId=$GROUP_ID \
