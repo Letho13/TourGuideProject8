@@ -18,7 +18,6 @@ prepare-job:
   stage: prepare
   script:
     - cd $LIBRARIES_DIR
-
     # Télécharger gpsUtil.jar depuis GitLab
     - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o gpsUtil.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/gpsUtil.jar"
 
