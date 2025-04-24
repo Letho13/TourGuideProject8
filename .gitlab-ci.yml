@@ -9,10 +9,6 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "-B -ntp"
   LIBRARIES_DIR: "TourGuide/libs"
-  # Liens vers les JARs sur GitLab
-  GPSUTIL_JAR: "https://gitlab.com/octheoleb/gpsutil/-/raw/master/target/gpsUtil.jar"
-  TRIPPRICER_JAR: "https://gitlab.com/octheoleb/trippricer/-/raw/master/target/tripPricer.jar"
-  REWARDCENTRAL_JAR: "https://gitlab.com/octheoleb/rewardcentral/-/raw/master/target/RewardCentral.jar"
   GROUP_ID: "com.openclassrooms"
   VERSION: "1.0.0"
   MAVEN_REPO_URL: "https://gitlab.com/api/v4/projects/69257506/packages/maven" # URL du repository GitLab Maven
@@ -22,51 +18,54 @@ prepare-job:
   stage: prepare
   script:
     - cd $LIBRARIES_DIR
-    - |
-      # Installer gpsUtil
-      if [ ! -f "$MAVEN_REPO_DIR/gpsUtil/gpsUtil.jar" ]; then
-        mvn install:install-file \
-          -Dfile=$GPSUTIL_JAR \
-          -DgroupId=$GROUP_ID \
-          -DartifactId=gpsUtil \
-          -Dversion=$VERSION \
-          -Dpackaging=jar \
-          -DgeneratePom=true \
-          -DrepositoryId=gitlab-maven \
-          -Durl=$MAVEN_REPO_URL \
-          -Dusername=$CI_JOB_TOKEN \
-          $MAVEN_CLI_OPTS
-      fi
 
-      # Installer tripPricer
-      if [ ! -f "$MAVEN_REPO_DIR/tripPricer/tripPricer.jar" ]; then
-        mvn install:install-file \
-          -Dfile=$TRIPPRICER_JAR \
-          -DgroupId=$GROUP_ID \
-          -DartifactId=tripPricer \
-          -Dversion=$VERSION \
-          -Dpackaging=jar \
-          -DgeneratePom=true \
-          -DrepositoryId=gitlab-maven \
-          -Durl=$MAVEN_REPO_URL \
-          -Dusername=$CI_JOB_TOKEN \
-          $MAVEN_CLI_OPTS
-      fi
+    # Télécharger gpsUtil.jar depuis GitLab
+    - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o gpsUtil.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/gpsUtil.jar"
 
-      # Installer rewardCentral
-      if [ ! -f "$MAVEN_REPO_DIR/rewardCentral/RewardCentral.jar" ]; then
-        mvn install:install-file \
-          -Dfile=$REWARDCENTRAL_JAR \
-          -DgroupId=$GROUP_ID \
-          -DartifactId=rewardCentral \
-          -Dversion=$VERSION \
-          -Dpackaging=jar \
-          -DgeneratePom=true \
-          -DrepositoryId=gitlab-maven \
-          -Durl=$MAVEN_REPO_URL \
-          -Dusername=$CI_JOB_TOKEN \
-          $MAVEN_CLI_OPTS
-      fi
+    # Télécharger tripPricer.jar depuis GitLab
+    - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o tripPricer.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/tripPricer.jar"
+
+    # Télécharger RewardCentral.jar depuis GitLab
+    - curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" -L -o RewardCentral.jar "https://gitlab.com/octheoleb/project-tour-guide/raw/master/TourGuide/libs/RewardCentral.jar"
+
+    # Installer gpsUtil
+    - mvn install:install-file \
+      -Dfile=gpsUtil.jar \
+      -DgroupId=$GROUP_ID \
+      -DartifactId=gpsUtil \
+      -Dversion=$VERSION \
+      -Dpackaging=jar \
+      -DgeneratePom=true \
+      -DrepositoryId=gitlab-maven \
+      -Durl=$MAVEN_REPO_URL \
+      -Dusername=$CI_JOB_TOKEN \
+      $MAVEN_CLI_OPTS
+
+    # Installer tripPricer
+    - mvn install:install-file \
+      -Dfile=tripPricer.jar \
+      -DgroupId=$GROUP_ID \
+      -DartifactId=tripPricer \
+      -Dversion=$VERSION \
+      -Dpackaging=jar \
+      -DgeneratePom=true \
+      -DrepositoryId=gitlab-maven \
+      -Durl=$MAVEN_REPO_URL \
+      -Dusername=$CI_JOB_TOKEN \
+      $MAVEN_CLI_OPTS
+
+    # Installer RewardCentral
+    - mvn install:install-file \
+      -Dfile=RewardCentral.jar \
+      -DgroupId=$GROUP_ID \
+      -DartifactId=rewardCentral \
+      -Dversion=$VERSION \
+      -Dpackaging=jar \
+      -DgeneratePom=true \
+      -DrepositoryId=gitlab-maven \
+      -Durl=$MAVEN_REPO_URL \
+      -Dusername=$CI_JOB_TOKEN \
+      $MAVEN_CLI_OPTS
 
   artifacts:
     paths:
