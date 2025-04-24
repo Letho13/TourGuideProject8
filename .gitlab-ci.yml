@@ -9,9 +9,10 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "-B -ntp"
   LIBRARIES_DIR: "TourGuide/libs"
-  GPSUTIL_JAR: "../../gpsUtil/target/gpsUtil.jar"
-  TRIPPRICER_JAR: "../../tripPricer/target/tripPricer.jar"
-  REWARDCENTRAL_JAR: "../../RewardCentral/target/RewardCentral.jar"
+  # Liens vers les JARs sur GitLab
+  GPSUTIL_JAR: "https://gitlab.com/octheoleb/gpsutil/-/raw/master/target/gpsUtil.jar"
+  TRIPPRICER_JAR: "https://gitlab.com/octheoleb/trippricer/-/raw/master/target/tripPricer.jar"
+  REWARDCENTRAL_JAR: "https://gitlab.com/octheoleb/rewardcentral/-/raw/master/target/RewardCentral.jar"
   GROUP_ID: "com.openclassrooms"
   VERSION: "1.0.0"
   MAVEN_REPO_URL: "https://gitlab.com/api/v4/projects/69257506/packages/maven" # URL du repository GitLab Maven
