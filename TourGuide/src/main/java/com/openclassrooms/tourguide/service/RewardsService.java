@@ -3,10 +3,8 @@ package com.openclassrooms.tourguide.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
@@ -42,10 +40,23 @@ public class RewardsService {
         proximityBuffer = defaultProximityBuffer;
     }
 
+    private List<Attraction> cachedAttractions;
+
+    @PostConstruct
+    public void init() {
+        cachedAttractions = gpsUtil.getAttractions();
+    }
+
+    public List<Attraction> getCachedAttractions() {
+        return cachedAttractions;
+    }
 
     public CompletableFuture<Void> calculateRewards(User user) {
         List<VisitedLocation> userLocations = new ArrayList<>(user.getVisitedLocations());
-        List<Attraction> attractions = gpsUtil.getAttractions();
+//        List<Attraction> attractions = gpsUtil.getAttractions()
+//                .stream()
+//                .toList() ;
+        List<Attraction> attractions = getCachedAttractions();
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
