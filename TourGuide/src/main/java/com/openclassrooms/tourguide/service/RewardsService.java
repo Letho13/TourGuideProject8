@@ -50,7 +50,8 @@ public class RewardsService {
         var addUserRewardFuture = new ArrayList<>(user.getVisitedLocations()).stream()
                 .flatMap(visitedLocation -> attractions.stream()
                         .filter(attraction -> nearAttraction(visitedLocation, attraction))
-                        .map(attraction -> CompletableFuture.runAsync(() -> user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user))),
+                        .map(attraction -> CompletableFuture.runAsync(()
+                                        -> user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user))),
                                 executor)))
                 .toArray(CompletableFuture[]::new);
 

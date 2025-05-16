@@ -106,7 +106,6 @@ public class TourGuideService {
             return gpsUtil.getAttractions().stream()
                     .map(attraction -> {
                         double distance = rewardsService.getDistance(attraction, visitedLocationCF.location);
-//                        int reward = rewardsService.getRewardPoints(attraction, user);
                         RewardCentral rewardCentral = new RewardCentral();
                         int reward = rewardCentral.getAttractionRewardPoints(attraction.attractionId, visitedLocationCF.userId);
                         return new NearByAttractionsByUserDTO(

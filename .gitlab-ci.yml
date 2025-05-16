@@ -10,7 +10,7 @@ prepare:
   stage: prepare
   script:
     - echo "Préparation de l'environnement"
-    - find . -name pom.xml  # Débogage pour confirmer l’emplacement du pom.xml
+    - find . -name pom.xml
 
 test:
   stage: test
@@ -27,7 +27,7 @@ build:
       - mvn clean package
       - mkdir -p libs
       - mv target/tourguide-0.0.1-SNAPSHOT.jar libs/ || echo "Aucun JAR à déplacer"
-      - ls libs/   # Débogage
+      - ls libs/
   artifacts:
     paths:
       - TourGuide/libs/*.jar
